@@ -1,0 +1,48 @@
+model: "Qwen/Qwen3-235B-A22B-Instruct-2507"
+toc_check_page_num: 20
+max_page_num_each_node: 10
+max_token_num_each_node: 20000
+if_add_node_id: "yes"
+if_add_node_summary: "yes"
+if_add_doc_description: "yes"
+if_add_node_text: "yes"
+
+# Cross-document indexing settings
+cross_document:
+  # Cross-document index settings
+  index_path: "./cross_document_index.json"
+  trees_directory: "./cross_document_trees"
+
+  # Document selection settings
+  max_documents_per_query: 5
+  max_results_per_document: 3
+
+  # Description generation settings
+  description_model: "Qwen/Qwen3-235B-A22B-Instruct-2507"
+  description_max_sections: 5
+
+  # Document selection settings
+  selection_model: "Qwen/Qwen3-235B-A22B-Instruct-2507"
+  selection_timeout: 30
+
+  # Performance settings
+  batch_processing: true
+  cache_descriptions: true
+  enable_async: true
+
+# Tree Search settings
+tree_search:
+  # Node analysis settings
+  max_nodes_per_document: 5
+  min_relevance_score: 0.3
+  include_content_preview: true
+  preview_max_length: 200
+
+  # Performance settings
+  batch_size: 3
+  cache_enabled: true
+  max_retries: 3
+  retry_delay: 1.0
+
+  # Model settings
+  model: "Qwen/Qwen3-235B-A22B-Instruct-2507"
