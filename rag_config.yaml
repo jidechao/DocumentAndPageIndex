@@ -1,0 +1,66 @@
+# RAG系统配置文件
+
+# LLM配置
+llm:
+  # 提供者类型: "openai" 或 "custom"
+  provider: "openai"
+  
+  # 模型名称
+  model: "qwen3-max"
+  
+  # API密钥 (从环境变量读取)
+  api_key: "${CHATGPT_API_KEY}"
+  
+  # 自定义提供者的base_url (可选)
+  # 如果使用OpenAI官方API，设置为null
+  # 如果使用自定义提供者，设置为实际的API端点
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  
+  # 温度参数 (0-1之间，越低越确定性)
+  temperature: 0
+
+# 索引路径配置
+paths:
+  # 索引根目录
+  indexes_dir: "./indexes"
+  
+  # 树形索引目录
+  trees_dir: "./indexes/trees"
+  
+  # 文件目录索引文件路径
+  directory_index: "./indexes/directory_index.json"
+
+# PageIndex配置
+pageindex:
+  # 检查目录的页数
+  toc_check_page_num: 20
+  
+  # 每个节点的最大页数
+  max_page_num_each_node: 10
+  
+  # 每个节点的最大token数
+  max_token_num_each_node: 20000
+  
+  # 是否添加节点ID
+  if_add_node_id: "yes"
+  
+  # 是否添加节点摘要
+  if_add_node_summary: "yes"
+  
+  # 是否添加文档描述
+  if_add_doc_description: "yes"
+  
+  # 是否添加节点文本
+  if_add_node_text: "yes"
+
+# MCP服务配置 (可选，可通过命令行参数覆盖)
+mcp:
+  # 传输协议: "stdio", "http", "sse"
+  transport: "stdio"
+  
+  # HTTP/SSE服务器配置
+  host: "0.0.0.0"
+  port: 8000
+  
+  # 日志级别: "DEBUG", "INFO", "WARNING", "ERROR"
+  log_level: "INFO"

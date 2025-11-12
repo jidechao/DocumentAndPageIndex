@@ -18,52 +18,30 @@ from pathlib import Path
 from types import SimpleNamespace as config
 
 CHATGPT_API_KEY = os.getenv("CHATGPT_API_KEY")
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
-
-def validate_base_url(url):
-    """
-    Validate base URL format for OpenAI-compatible APIs.
-
-    Args:
-        url (str): The base URL to validate
-
-    Returns:
-        str: The validated URL or None if invalid
-    """
-    if not url:
-        return None
-
-    # Remove trailing slashes to avoid double slashes in API paths
-    url = url.rstrip('/')
-
-    # Basic URL format validation
-    if not (url.startswith('http://') or url.startswith('https://')):
-        logging.warning(f"Invalid base URL format: {url}. URL should start with http:// or https://")
-        return None
-
-    return url
 
 def count_tokens(text, model=None):
     if not text:
         return 0
+    
+    # 尝试使用模型特定的编码器
     try:
         enc = tiktoken.encoding_for_model(model)
     except KeyError:
-        # If the model is not recognized by tiktoken, use a default encoding
-        enc = tiktoken.get_encoding("cl100k_base")  # Default encoding that works for most models
+        # 如果模型不被 tiktoken 支持，使用 cl100k_base 编码器（GPT-4 使用的编码器）
+        # 这对大多数现代模型来说是一个合理的近似
+        enc = tiktoken.get_encoding("cl100k_base")
+    
     tokens = enc.encode(text)
     return len(tokens)
 
-def ChatGPT_API_with_finish_reason(model, prompt, api_key=CHATGPT_API_KEY, base_url=OPENAI_BASE_URL, chat_history=None):
+def ChatGPT_API_with_finish_reason(model, prompt, api_key=CHATGPT_API_KEY, chat_history=None, base_url=None):
     max_retries = 10
-
-    # Validate and configure base URL
-    validated_base_url = validate_base_url(base_url)
-    client_config = {"api_key": api_key}
-    if validated_base_url:
-        client_config["base_url"] = validated_base_url
-
-    client = openai.OpenAI(**client_config)
+    client_kwargs = {"api_key": api_key}
+    if base_url:
+        client_kwargs["base_url"] = base_url
+    elif os.getenv("OPENAI_BASE_URL"):
+        client_kwargs["base_url"] = os.getenv("OPENAI_BASE_URL")
+    client = openai.OpenAI(**client_kwargs)
     for i in range(max_retries):
         try:
             if chat_history:
@@ -93,16 +71,14 @@ def ChatGPT_API_with_finish_reason(model, prompt, api_key=CHATGPT_API_KEY, base_
 
 
 
-def ChatGPT_API(model, prompt, api_key=CHATGPT_API_KEY, base_url=OPENAI_BASE_URL, chat_history=None):
+def ChatGPT_API(model, prompt, api_key=CHATGPT_API_KEY, chat_history=None, base_url=None):
     max_retries = 10
-
-    # Validate and configure base URL
-    validated_base_url = validate_base_url(base_url)
-    client_config = {"api_key": api_key}
-    if validated_base_url:
-        client_config["base_url"] = validated_base_url
-
-    client = openai.OpenAI(**client_config)
+    client_kwargs = {"api_key": api_key}
+    if base_url:
+        client_kwargs["base_url"] = base_url
+    elif os.getenv("OPENAI_BASE_URL"):
+        client_kwargs["base_url"] = os.getenv("OPENAI_BASE_URL")
+    client = openai.OpenAI(**client_kwargs)
     for i in range(max_retries):
         try:
             if chat_history:
@@ -128,18 +104,17 @@ def ChatGPT_API(model, prompt, api_key=CHATGPT_API_KEY, base_url=OPENAI_BASE_URL
                 return "Error"
             
 
-async def ChatGPT_API_async(model, prompt, api_key=CHATGPT_API_KEY, base_url=OPENAI_BASE_URL):
+async def ChatGPT_API_async(model, prompt, api_key=CHATGPT_API_KEY, base_url=None):
     max_retries = 10
     messages = [{"role": "user", "content": prompt}]
+    client_kwargs = {"api_key": api_key}
+    if base_url:
+        client_kwargs["base_url"] = base_url
+    elif os.getenv("OPENAI_BASE_URL"):
+        client_kwargs["base_url"] = os.getenv("OPENAI_BASE_URL")
     for i in range(max_retries):
         try:
-            # Validate and configure base URL
-            validated_base_url = validate_base_url(base_url)
-            client_config = {"api_key": api_key}
-            if validated_base_url:
-                client_config["base_url"] = validated_base_url
-
-            async with openai.AsyncOpenAI(**client_config) as client:
+            async with openai.AsyncOpenAI(**client_kwargs) as client:
                 response = await client.chat.completions.create(
                     model=model,
                     messages=messages,

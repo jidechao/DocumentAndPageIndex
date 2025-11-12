@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "pageindex-rag": {
+      "command": "python",
+      "args": [
+        "C:/path/to/your/project/mcp_server.py"
+      ],
+      "env": {
+        "CHATGPT_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}

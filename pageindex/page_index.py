@@ -1097,23 +1097,7 @@ def page_index_main(doc, opt=None):
             'structure': structure,
         }
 
-    # Check if there's already a running event loop
-    try:
-        loop = asyncio.get_running_loop()
-        # If there's a running loop, we need to run the async function differently
-        import threading
-        if threading.current_thread() is threading.main_thread():
-            # Create a new thread to run the async function
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(asyncio.run, page_index_builder())
-                return future.result()
-        else:
-            # We're in a thread, create a new event loop
-            return asyncio.run(page_index_builder())
-    except RuntimeError:
-        # No running loop, we can safely use asyncio.run()
-        return asyncio.run(page_index_builder())
+    return asyncio.run(page_index_builder())
 
 
 def page_index(doc, model=None, toc_check_page_num=None, max_page_num_each_node=None, max_token_num_each_node=None,

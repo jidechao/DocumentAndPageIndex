@@ -1,0 +1,31 @@
+services:
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pageindex-rag-mcp
+    ports:
+      - "8000:8000"
+    environment:
+      # LLM API配置
+      - CHATGPT_API_KEY=${CHATGPT_API_KEY}
+    volumes:
+      # 挂载索引目录（必需）
+      - ./indexes:/app/indexes
+      # 挂载配置文件（可选，如果需要自定义配置）
+      - ./rag_config.yaml:/app/rag_config.yaml
+      # 挂载日志目录（可选）
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/mcp', headers={'Accept': 'text/event-stream'})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge

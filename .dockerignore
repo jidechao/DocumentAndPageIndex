@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README_MCP.md
+docs/
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Logs
+logs/
+*.log
+
+# Data files (will be mounted as volumes)
+data/
+indexes/
+
+# Temporary files
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Other
+cookbook/
+tutorials/
+fastmcp/
+CHANGELOG.md
+CLAUDE.md
+IMPLEMENTATION_SUMMARY.md
+STREAM_OUTPUT_FEATURE.md
+task_*.md
+claude_desktop_config_*.json
